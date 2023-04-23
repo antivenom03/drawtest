@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Line Tool Demo</title>
+    <style>
+      svg {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="line-btn">Line Tool</button>
+    <svg id="canvas"></svg>
+    <script>
+      let lineBtn = document.getElementById("line-btn");
+      let canvas = document.getElementById("canvas");
+      let line;
+      let activeLine = false;
+      let startPoint = {};
+
+      function startLine(x, y) {
+        activeLine = true;
+        startPoint.x = x;
+        startPoint.y = y;
+      }
+
+      function updateLine(x, y) {
+        if (activeLine) {
+          if (!line) {
+            line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", startPoint.x);
+            line.setAttribute("y1", startPoint.y);
+            line.setAttribute("x2", x);
+            line.setAttribute("y2", y);
+            line.setAttribute("stroke", "black");
+            canvas.appendChild(line);
+          } else {
+            line.setAttribute("x2", x);
+            line.setAttribute("y2", y);
+          }
+        }
+      }
+
+      function stopLine() {
+        activeLine = false;
+        line = null;
+      }
+
+      lineBtn.addEventListener("click", function () {
+        if (!activeLine) {
+          canvas.addEventListener("click", function (e) {
+            startLine(e.offsetX, e.offsetY);
+          });
+          canvas.addEventListener("click", function (e) {
+            updateLine(e.offsetX, e.offsetY);
+            canvas.removeEventListener("click", arguments.callee);
+          });
+        } else {
+          canvas.removeEventListener("click", startLine);
+          canvas.removeEventListener("click", updateLine);
+        }
+      });
+    </script>
+  </body>
+</html>
