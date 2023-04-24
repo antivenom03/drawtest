@@ -18,18 +18,39 @@
         width: 100%;
         height: 100%;
       }
+      
+      .active {
+        background-color: blue;
+        color: white;
+      }
     </style>
   </head>
   <body>
+    <button id="toggle-button">Line Tool</button>
     <svg id="canvas"></svg>
     
     <script>
       const canvas = document.getElementById("canvas");
+      const toggleButton = document.getElementById("toggle-button");
       let startPoint = null;
+      let active = false;
       
+      toggleButton.addEventListener("click", toggleActive);
       canvas.addEventListener("click", handleClick);
       
+      function toggleActive() {
+        active = !active;
+        if (active) {
+          toggleButton.classList.add("active");
+        } else {
+          toggleButton.classList.remove("active");
+        }
+      }
+      
       function handleClick(event) {
+        if (!active) {
+          return;
+        }
         if (!startPoint) {
           // If this is the first click, save the starting point
           startPoint = { x: event.offsetX, y: event.offsetY };
