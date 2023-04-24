@@ -1,93 +1,119 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>SVG Line Drawing</title>
-    <style>
-      html,
-      body {
-        height: 100%;
+
+<head>
+  <meta charset="UTF-8">
+  <title>Line Drawing Tool</title>
+  <style>
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      cursor: default;
+    }
+    .button {
+      background-color: white;
+      border: 1px solid black;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .button.active {
+      background-color: blue;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <button id="select-button" class="button active">Select</button>
+  <button id="line-button" class="button">Line Tool</button>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const selectButton = document.getElementById("select-button");
+    const lineButton = document.getElementById("line-button");
+
+    let isSelectMode = true;
+    let isLineMode = false;
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function init() {
+      canvas.addEventListener("mousedown", handleMouseDown);
+      canvas.addEventListener("mouseup", handleMouseUp);
+      canvas.addEventListener("mousemove", handleMouseMove);
+      selectButton.addEventListener("click", toggleSelectMode);
+      lineButton.addEventListener("click", toggleLineMode);
+      draw();
+    }
+
+    function toggleSelectMode() {
+      isSelectMode = true;
+      isLineMode = false;
+      selectButton.classList.add("active");
+      lineButton.classList.remove("active");
+      canvas.style.cursor = "move";
+    }
+
+    function toggleLineMode() {
+      isSelectMode = false;
+      isLineMode = true;
+      lineButton.classList.add("active");
+      selectButton.classList.remove("active");
+      canvas.style.cursor = "default";
+    }
+
+    function handleMouseDown(e) {
+      if (isSelectMode && e.button === 0) {
+        isDragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      } else if (isLineMode && e.button === 0) {
+        ctx.beginPath();
+        ctx.moveTo(e.clientX, e.clientY);
+        canvas.addEventListener("mousemove", handleLineMouseMove);
       }
-      
-      body {
-        margin: 0;
-        padding: 0;
+    }
+
+    function handleMouseMove(e) {
+      if (isDragging) {
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        canvas.style.left = parseInt(canvas.style.left) + dx + "px";
+        canvas.style.top = parseInt(canvas.style.top) + dy + "px";
       }
-      
-      svg {
-        width: 100%;
-        height: 100%;
+    }
+
+    function handleMouseUp(e) {
+      if (isDragging) {
+        isDragging = false;
       }
-      
-      .active {
-        background-color: blue;
-        color: white;
+      if (isLineMode && e.button === 0) {
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+        canvas.removeEventListener("mousemove", handleLineMouseMove);
       }
-    </style>
-  </head>
-  <body>
-    <button id="select-button">Select</button>
-    <button id="toggle-button">Line Tool</button>
-    <svg id="canvas"></svg>
-    
-    <script>
-      const canvas = document.getElementById("canvas");
-      const toggleButton = document.getElementById("toggle-button");
-      const selectButton = document.getElementById("select-button");
-      let startPoint = null;
-      let active = false;
-      let selectActive = true;
-      
-      toggleButton.addEventListener("click", toggleActive);
-      selectButton.addEventListener("click", activateSelect);
-      canvas.addEventListener("click", handleClick);
-      
-      function toggleActive() {
-        if (active) {
-          active = false;
-          selectActive = true;
-          selectButton.classList.add("active");
-          toggleButton.classList.remove("active");
-        } else {
-          active = true;
-          selectActive = false;
-          toggleButton.classList.add("active");
-          selectButton.classList.remove("active");
-        }
-      }
-      
-      function activateSelect() {
-        active = false;
-        selectActive = true;
-        selectButton.classList.add("active");
-        toggleButton.classList.remove("active");
-      }
-      
-      function handleClick(event) {
-        if (selectActive) {
-          // Select tool is active, do nothing for now
-          return;
-        }
-        if (!active) {
-          return;
-        }
-        if (!startPoint) {
-          // If this is the first click, save the starting point
-          startPoint = { x: event.offsetX, y: event.offsetY };
-        } else {
-          // If this is the second click, create the line
-          const endPoint = { x: event.offsetX, y: event.offsetY };
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", startPoint.x);
-          line.setAttribute("y1", startPoint.y);
-          line.setAttribute("x2", endPoint.x);
-          line.setAttribute("y2", endPoint.y);
-          line.setAttribute("stroke", "black");
-          line.setAttribute("stroke-width", "2");
-          canvas.appendChild(line);
-          startPoint = null;
-        }
-      }
-    </script>
-  </body>
+    }
+
+    function handleLineMouseMove(e) {
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+    }
+
+    function draw() {
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    init();
+  </script>
+</body>
+
 </html>
