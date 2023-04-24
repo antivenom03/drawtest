@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <title>SVG Line Drawing</title>
     <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      
       svg {
-        border: 1px solid black;
+        width: 100%;
+        height: 100%;
       }
     </style>
   </head>
   <body>
-    <svg id="canvas" width="500" height="500"></svg>
+    <svg id="canvas"></svg>
     
     <script>
       const canvas = document.getElementById("canvas");
