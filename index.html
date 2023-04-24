@@ -36,20 +36,23 @@
       const selectButton = document.getElementById("select-button");
       let startPoint = null;
       let active = false;
-      let selectActive = false;
+      let selectActive = true;
       
       toggleButton.addEventListener("click", toggleActive);
       selectButton.addEventListener("click", activateSelect);
       canvas.addEventListener("click", handleClick);
       
       function toggleActive() {
-        active = !active;
-        selectActive = false;
         if (active) {
+          active = false;
+          selectActive = true;
+          selectButton.classList.add("active");
+          toggleButton.classList.remove("active");
+        } else {
+          active = true;
+          selectActive = false;
           toggleButton.classList.add("active");
           selectButton.classList.remove("active");
-        } else {
-          toggleButton.classList.remove("active");
         }
       }
       
