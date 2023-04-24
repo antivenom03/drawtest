@@ -26,28 +26,45 @@
     </style>
   </head>
   <body>
+    <button id="select-button">Select</button>
     <button id="toggle-button">Line Tool</button>
     <svg id="canvas"></svg>
     
     <script>
       const canvas = document.getElementById("canvas");
       const toggleButton = document.getElementById("toggle-button");
+      const selectButton = document.getElementById("select-button");
       let startPoint = null;
       let active = false;
+      let selectActive = false;
       
       toggleButton.addEventListener("click", toggleActive);
+      selectButton.addEventListener("click", activateSelect);
       canvas.addEventListener("click", handleClick);
       
       function toggleActive() {
         active = !active;
+        selectActive = false;
         if (active) {
           toggleButton.classList.add("active");
+          selectButton.classList.remove("active");
         } else {
           toggleButton.classList.remove("active");
         }
       }
       
+      function activateSelect() {
+        active = false;
+        selectActive = true;
+        selectButton.classList.add("active");
+        toggleButton.classList.remove("active");
+      }
+      
       function handleClick(event) {
+        if (selectActive) {
+          // Select tool is active, do nothing for now
+          return;
+        }
         if (!active) {
           return;
         }
