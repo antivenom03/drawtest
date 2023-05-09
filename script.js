@@ -1,5 +1,5 @@
 const canvas = document.getElementById("canvas");
-const toggleButton = document.getElementById("toggle-button");
+const lineButton = document.getElementById("line-button");
 const selectButton = document.getElementById("select-button");
 let startPoint = null;
 let active = false;
@@ -7,22 +7,22 @@ let selectActive = true;
 let selectedElement = null;
 let offset = { x: 0, y: 0 };
 
-toggleButton.addEventListener("click", toggleActive);
+lineButton.addEventListener("click", lineActive);
 selectButton.addEventListener("click", activateSelect);
 canvas.addEventListener("click", handleClick);
 canvas.addEventListener("mousemove", handleMouseMove);
 canvas.addEventListener("mouseup", handleMouseUp);
 
-function toggleActive() {
+function lineActive() {
   if (active) {
     active = false;
     selectActive = true;
     selectButton.classList.add("active");
-    toggleButton.classList.remove("active");
+    lineButton.classList.remove("active");
   } else {
     active = true;
     selectActive = false;
-    toggleButton.classList.add("active");
+    lineButton.classList.add("active");
     selectButton.classList.remove("active");
   }
 }
@@ -31,7 +31,7 @@ function activateSelect() {
   active = false;
   selectActive = true;
   selectButton.classList.add("active");
-  toggleButton.classList.remove("active");
+  lineButton.classList.remove("active");
 }
 
 function handleClick(event) {
